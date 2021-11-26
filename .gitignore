@@ -1,2 +1,5 @@
 .gitignore
 **/bin
+**/.classpath
+**/.settings
+**/.project
