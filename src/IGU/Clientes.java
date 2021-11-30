@@ -26,7 +26,7 @@ public class Clientes extends JFrame implements ActionListener{
 
 	public Clientes() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(380,200);
+		setSize(375,200);
 		setLocationRelativeTo(null);
 		setTitle("Datos de la reserva");
 	

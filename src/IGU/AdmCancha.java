@@ -17,9 +17,11 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 import java.awt.Font;
+
 import javax.swing.JSeparator;
 import java.awt.Component;
 import javax.swing.Box;
+
 import java.awt.Button;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -30,22 +32,19 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 
 
 public class AdmCancha extends JFrame implements ActionListener {
 
 	//Variables Globales
-	private JTextField Nombre;
-	private JTextField Apellido;
-	private JTextField Telefono;
-	JButton btnCaja, btnReservar, btnCancelar;;
-	private JLabel lblCanchas;
+	JButton btnCaja, btnReservar, btnCancelar;
 	private JLabel lblDatos;
 	JToggleButton btnCancha, btnCancha2, btnHora[], btnHora2[];
 	int c=0;
-	int haySeleccion = 0;
-	Color green = new Color(75, 139,  59);
+	Color green = new Color(10, 47, 30);
+	Color selectedGreen = new Color(75, 139,  59);
 
 	public AdmCancha() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,6 +59,8 @@ public class AdmCancha extends JFrame implements ActionListener {
 
 		//BOTONES DE RESERVA CANCHA 1 O CANCHA 2
 		btnCancha = new JToggleButton("Cancha 1", false);
+		UIManager.put("ToggleButton.select", selectedGreen);
+		SwingUtilities.updateComponentTreeUI(btnCancha);
 		btnCancha.setBorder(UIManager.getBorder("RadioButton.border"));
 		btnCancha.setBounds(122, 59, 162, 377);
 		btnCancha.addActionListener(this);		
@@ -68,6 +69,8 @@ public class AdmCancha extends JFrame implements ActionListener {
 		MenuCanchas.add(btnCancha);
 		
 		btnCancha2 = new JToggleButton("Cancha 2", false);
+		UIManager.put("ToggleButton.select", selectedGreen);
+		SwingUtilities.updateComponentTreeUI(btnCancha2);
 		btnCancha2.setBorder(UIManager.getBorder("RadioButton.border"));
 		btnCancha2.setBounds(300, 59, 162, 377);
 		btnCancha2.addActionListener(this);
@@ -85,27 +88,20 @@ public class AdmCancha extends JFrame implements ActionListener {
 		for(int i = 0; i<10; i++) {			
 			btnHora[i] = new JToggleButton(Integer.toString(i+13) + "hs", false);
 			btnHora[i].setEnabled(false);
-		}
-		
-		for(int i = 0; i<10; i++) {
+			
 			btnHora[i].setBounds(x, y, z, w);
 			btnHora[i].addActionListener(this);
 			MenuCanchas.add(btnHora[i]);
 			y = y + 38;
-		}
-		
-		for(int j = 0; j<10; j++) {			
-			btnHora2[j] = new JToggleButton(Integer.toString(j+13) + "hs", false);
-			btnHora2[j].setEnabled(false);
-		}
-		
-		for(int j = 0; j<10; j++) {
-			btnHora2[j].setBounds(a, b, c, d);
-			btnHora2[j].addActionListener(this);
-			MenuCanchas.add(btnHora2[j]);
+			
+			btnHora2[i] = new JToggleButton(Integer.toString(i+13) + "hs", false);
+			btnHora2[i].setEnabled(false);
+			
+			btnHora2[i].setBounds(a, b, c, d);
+			btnHora2[i].addActionListener(this);
+			MenuCanchas.add(btnHora2[i]);
 			b = b + 38;
 		}
-       
 		
 		//BOTON DE CAJA SUPERIOR
 		btnCaja = new JButton("Ver caja");
@@ -173,42 +169,51 @@ public class AdmCancha extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
-		if(btnReservar==e.getSource()) {
+		if(btnReservar == e.getSource()) {
 			JOptionPane.showMessageDialog(null, "Es necesario completar los datos del cliente");
 			Clientes mover = new Clientes();
 			mover.setVisible(true);
 		}
 		
-		if(btnCancelar==e.getSource()) {
-			JOptionPane.showMessageDialog(null,"Cancelacion exitosa");
+		if(btnCancelar == e.getSource()) {
+			JOptionPane.showMessageDialog(null, "Cancelacion exitosa");
 		}
 		
-		if(btnCaja==e.getSource()) {
-			JOptionPane.showMessageDialog(null,"Abriendo caja");
+		if(btnCaja == e.getSource()) {
+			JOptionPane.showMessageDialog(null, "Abriendo caja");
 			IGcaja mover = new IGcaja();
 			mover.setVisible(true);
 		}
 		
-		//Funcion cuando selecciono el boton de la cancha 1
+		// Cuando se selecciona una cancha se deselecciona la otra
 		if(btnCancha.isSelected()) {
 			btnCancha2.setSelected(false);
-			
-			for(int i = 0; i<10; i++) {
-				btnHora[i].setEnabled(true);		
-			}
-		} else {
-			for(int i = 0; i<10; i++) {
-				btnHora[i].setEnabled(false);
+		} else if (btnCancha2.isSelected()) {
+            btnCancha.setSelected(false);
+        } else {
+            btnCancha.setSelected(false);
+            btnCancha2.setSelected(false);
+        }
+		
+		// También se deseleccionan sus horarios
+		for(int i = 0; i<10; i++) {
+			if(btnCancha.isSelected()) { 
+				btnHora[i].setEnabled(true);	
+                btnHora2[i].setEnabled(false);
+			} else if (btnCancha2.isSelected()) {
+				btnHora2[i].setEnabled(true);
+                btnHora[i].setEnabled(false);
+			} else {
+				btnHora2[i].setEnabled(false);
+                btnHora[i].setEnabled(false);
 			}
 		}
 		
+		// Inhabilita luego de reservar
 		for(int j=0; j<10; j++) {
 			if(btnHora[j].isSelected()  && btnReservar == e.getSource()) {
 				btnHora[j].setEnabled(false);
 				btnCancha.setSelected(false);
-				
-				
 				
 				for(int i = 0; i<10; i++) {
 					if(btnHora[j] != btnHora[i]) {
@@ -216,34 +221,15 @@ public class AdmCancha extends JFrame implements ActionListener {
 					}
 				}
 				
-			}
-		}
-		
-		// Funcion cuando selecciono el boton de la cancha 2
-		// Si selecciono la cancha se habiltian todos sus horarios
-		if(btnCancha2.isSelected()) {
-			btnCancha.setSelected(false);
-			
-			for(int i = 0; i<10; i++) {
-				btnHora2[i].setEnabled(true);
-			}
-		} else {
-			for(int i = 0; i<10; i++) {
-				btnHora2[i].setEnabled(false);
-			}
-		}
-		
-		// Si selecciono un horario y clickea reservar
-		for(int j=0; j<10; j++) {
-			if(btnHora2[j].isSelected() && btnReservar == e.getSource()) {
+			} else if(btnHora2[j].isSelected() && btnReservar == e.getSource()) {
 				btnHora2[j].setEnabled(false);
 				btnCancha2.setSelected(false);
-								
+				
 				for(int i = 0; i<10; i++) {
 					if(btnHora2[j] != btnHora2[i]) {
 						btnHora2[i].setEnabled(false);
 					}
-				}			
+				}	
 			}
 		}
 	}
