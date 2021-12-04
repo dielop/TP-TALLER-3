@@ -113,7 +113,7 @@ public class IGcaja extends JFrame implements ActionListener {
 				descripciones.add(dataDescripcion);
 				valores.add(dataValor);
 				
-				try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("/home/sol/Descargas/caja.csv"),true))) {
+				try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("caja.csv"),true))) {
 					
 					StringBuilder sb = new StringBuilder();
 				    
@@ -139,7 +139,7 @@ public class IGcaja extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Exportando la caja...");
 				
 			String newLine;
-			try (BufferedReader csvReader = new BufferedReader(new FileReader("/home/sol/Descargas/caja.csv"))) {
+			try (BufferedReader csvReader = new BufferedReader(new FileReader("caja.csv"))) {
 				int bucle = 0;
 				while ((newLine = csvReader.readLine()) != null) {
 					if(bucle == 0) {
@@ -159,7 +159,7 @@ public class IGcaja extends JFrame implements ActionListener {
 			}  
 			
 			if(contador > 0) {
-				try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("/home/sol/Descargas/caja.csv"),true))) {
+				try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("caja.csv"),true))) {
 					StringBuilder sb = new StringBuilder();
 				    
 				    sb.append(',');
