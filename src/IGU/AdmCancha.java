@@ -25,6 +25,10 @@ import javax.swing.Box;
 import java.awt.Button;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +55,7 @@ public class AdmCancha extends JFrame implements ActionListener {
     int contador1 = 0, temp1 = 0, contador2 = 0, temp2 = 0;
     ArrayList <String> horario1 = new ArrayList <String>();
     ArrayList <String> horario2 = new ArrayList <String>();
+    int contador = 0;
 
 	public AdmCancha() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -148,8 +153,6 @@ public class AdmCancha extends JFrame implements ActionListener {
 		MenuCanchas.add(lblDatos);
 		
 		ctx.add(MenuCanchas);
-		
-		
 
 		setVisible(true);
 	}
@@ -170,46 +173,59 @@ public class AdmCancha extends JFrame implements ActionListener {
 		}
 		
 		if(btnCaja == e.getSource()) {
+			if(contador == 0) {
+				try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("/home/sol/Descargas/caja.csv"),true))) {
+					String str = "Cancha,Ingreso,Valor,Total\n";
+	
+				    writer.write(str);
+	
+				    contador = 1;
+				    
+				} catch (FileNotFoundException i) {
+					System.out.println(i.getMessage());
+				}  
+			} 
+
 			JOptionPane.showMessageDialog(null, "Abriendo caja");
 			IGcaja mover = new IGcaja();
 			mover.setVisible(true);
 		}
 		
 		// Cuando se selecciona una cancha se deselecciona la otra
-			if (btnCancha2 == e.getSource()) {
-				btnCancha.setSelected(false);        
-			}
-	 
-			if(btnCancha == e.getSource()) {
-				btnCancha2.setSelected(false);
-			}
+		if (btnCancha2 == e.getSource()) {
+			btnCancha.setSelected(false);        
+		}
+ 
+		if(btnCancha == e.getSource()) {
+			btnCancha2.setSelected(false);
+		}
 		
 		// Tambien se deseleccionan sus horarios		 
 		for(int i = 0; i<10; i++) {
 			if(btnCancha.isSelected()) {
 				btnHora[i].setEnabled(true);	
                 btnHora2[i].setEnabled(false);
-        //Verifica que la hora se haya seleccionado y que no este contenida en el arraylist de horarios seleccionados anteriormente         
-             if(btnHora[i] == e.getSource() && !horario1.contains(btnHora[i].toString())) {
+                
+                //Verifica que la hora se haya seleccionado y que no este contenida en el arraylist de horarios seleccionados anteriormente         
+                if(btnHora[i] == e.getSource() && !horario1.contains(btnHora[i].toString())) {
                 	btnReservar.setEnabled(true);
+                	
                 	if(btnReservar.isSelected()) {
-    		 		horario1.add(btnHora[i].toString()); //Agrego el horario seleccionado al arraylist           	   
+                		horario1.add(btnHora[i].toString()); //Agrego el horario seleccionado al arraylist           	   
                 	}
-            	}else {
-            		
             	}
 	
-			}     
-			 else if (btnCancha2.isSelected()) {
+			} else if (btnCancha2.isSelected()) {
 				btnHora2[i].setEnabled(true);
                 btnHora[i].setEnabled(false);
-                	if(btnHora2[i] == e.getSource() && !horario2.contains(btnHora2[i].toString())) {
-                		btnReservar.setEnabled(true);
-                		if(btnReservar.isSelected()) {
-                		horario2.add(btnHora2[i].toString()); //Agrego el horario seleccionado al arraylist   
-                		}
-            	}  	 	              
+                	
+                if(btnHora2[i] == e.getSource() && !horario2.contains(btnHora2[i].toString())) {
+                	btnReservar.setEnabled(true);
                 
+            		if(btnReservar.isSelected()) {
+            			horario2.add(btnHora2[i].toString()); //Agrego el horario seleccionado al arraylist   
+            		}
+            	}  	 
 			} else {
 				btnHora2[i].setEnabled(false);
                 btnHora[i].setEnabled(false);
@@ -223,16 +239,13 @@ public class AdmCancha extends JFrame implements ActionListener {
 		for(int i = 0; i<10; i++) {
 			if(btnCancha.isSelected() && btnHora[i].isSelected()) {
 				btnCancelar.setEnabled(true); 
-        //Verifica que este contenido en el arraylist de horarios seleccionados anteriormente y elimina       
-             if(btnCancelar.isSelected()){                	              
+				
+				//Verifica que este contenido en el arraylist de horarios seleccionados anteriormente y elimina       
+				if(btnCancelar.isSelected()){                	              
     		 		horario1.remove(btnHora[i].toString());
     		 		btnHora[i].setSelected(false);
-    		 		btnCancha.setSelected(false);
-                	
-            	}else {
-            		
+    		 		btnCancha.setSelected(false);	
             	}
-	
 			}   
 		}
 		
@@ -264,26 +277,3 @@ public class AdmCancha extends JFrame implements ActionListener {
 		
 	}
 }
-
-//CAMPOS DE TEXTO PARA GUARDAR INFORMACION DE QUIEN RESERVA
-		//Nombre = new JTextField();
-		//Nombre.setHorizontalAlignment(SwingConstants.CENTER);
-		//Nombre.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		//Nombre.setText("Nombre");
-		//Nombre.setBounds(570, 59, 106, 40);
-		//Nombre.setColumns(10);
-		//MenuCanchas.add(Nombre);
-		
-		//Apellido = new JTextField();
-		//Apellido.setHorizontalAlignment(SwingConstants.CENTER);
-		//Apellido.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		//Apellido.setText("Apellido");
-		//Apellido.setBounds(570, 110, 106, 40);
-		//MenuCanchas.add(Apellido);
-		
-		//Telefono = new JTextField();
-		//Telefono.setHorizontalAlignment(SwingConstants.CENTER);
-		//Telefono.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		//Telefono.setText("Telefono");
-		//Telefono.setBounds(570, 161, 106, 40);
-		//MenuCanchas.add(Telefono);
