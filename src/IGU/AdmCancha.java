@@ -126,6 +126,7 @@ public class AdmCancha extends JFrame implements ActionListener {
 		
 		btnCancelar = new JButton("Cancelar");
 		btnCancelar.setBounds(570, 120, 106, 51);
+		btnCancelar.setEnabled(false);
 		btnCancelar.addActionListener(this);
 		MenuCanchas.add(btnCancelar);
 		
@@ -154,7 +155,7 @@ public class AdmCancha extends JFrame implements ActionListener {
 	}
 	
 
-	@SuppressWarnings("unlikely-arg-type")
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -175,15 +176,13 @@ public class AdmCancha extends JFrame implements ActionListener {
 		}
 		
 		// Cuando se selecciona una cancha se deselecciona la otra
-	 if (btnCancha2.isSelected()) {
-        btnCancha.setSelected(false);        
-	 	} else if(btnCancha.isSelected()) {
-			btnCancha2.setSelected(false);
-		} else {
-            btnCancha.setSelected(false);
-            btnCancha2.setSelected(false);
-        }
-		
+			if (btnCancha2 == e.getSource()) {
+				btnCancha.setSelected(false);        
+			}
+	 
+			if(btnCancha == e.getSource()) {
+				btnCancha2.setSelected(false);
+			}
 		
 		// Tambien se deseleccionan sus horarios		 
 		for(int i = 0; i<10; i++) {
@@ -192,9 +191,10 @@ public class AdmCancha extends JFrame implements ActionListener {
                 btnHora2[i].setEnabled(false);
         //Verifica que la hora se haya seleccionado y que no este contenida en el arraylist de horarios seleccionados anteriormente         
              if(btnHora[i].isSelected() && !horario1.contains(btnHora[i].toString())) {
-                	btnReservar.setEnabled(true);               
+                	btnReservar.setEnabled(true);
+                	if(btnReservar.isSelected()) {
     		 		horario1.add(btnHora[i].toString()); //Agrego el horario seleccionado al arraylist           	   
-                	
+                	}
             	}  	 	              
 	
 			}     
@@ -202,8 +202,10 @@ public class AdmCancha extends JFrame implements ActionListener {
 				btnHora2[i].setEnabled(true);
                 btnHora[i].setEnabled(false);
                 	if(btnHora2[i].isSelected() && !horario2.contains(btnHora2[i].toString())) {
-                		btnReservar.setEnabled(true);               
-                		horario2.add(btnHora2[i].toString()); //Agrego el horario seleccionado al arraylist           	   
+                		btnReservar.setEnabled(true);
+                		if(btnReservar.isSelected()) {
+                		horario2.add(btnHora2[i].toString()); //Agrego el horario seleccionado al arraylist   
+                		}
             	}  	 	              
                 
 			} else {
@@ -212,6 +214,24 @@ public class AdmCancha extends JFrame implements ActionListener {
                 btnReservar.setEnabled(false);
 			}
 		
+		}
+		
+		
+		//Cancelacion de reservas
+		for(int i = 0; i<10; i++) {
+			if(btnCancha.isSelected() && btnHora[i].isSelected()) {
+				btnCancelar.setEnabled(true); 
+        //Verifica que este contenido en el arraylist de horarios seleccionados anteriormente y elimina       
+             if(btnCancelar.isSelected()){                	              
+    		 		horario1.remove(btnHora[i].toString());
+    		 		btnHora[i].setSelected(false);
+    		 		btnCancha.setSelected(false);
+                	
+            	}else {
+            		
+            	}
+	
+			}   
 		}
 		
 		// Inhabilita luego de reservar
