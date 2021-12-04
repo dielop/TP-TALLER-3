@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -51,7 +52,6 @@ public class Clientes extends JFrame implements ActionListener{
 		nomText = new JTextField();
 		nomText.setBounds(24, 50, 100, 30);
 		Box.add(nomText);
-		//apeText.setColumns(10);
 		
 		apeText = new JTextField();
 		apeText.setBounds(135, 50, 100, 30);
@@ -69,6 +69,7 @@ public class Clientes extends JFrame implements ActionListener{
 		
 		btnActualizar = new JButton("Crear reserva");
 		btnActualizar.setBounds(195, 120, 150, 23);
+		btnActualizar.addActionListener(this);
 		Box.add(btnActualizar);
 		
 		ctx.add(Box);
@@ -83,6 +84,18 @@ public class Clientes extends JFrame implements ActionListener{
 		if(btnAtras == e.getSource()) {
 			dispose();			
 		}
+		
+		if(btnActualizar == e.getSource()) {
+			String dataNombre = nomText.getText();			
+			String dataApellido = apeText.getText();
+			String dataTelefono = telText.getText();	
+			
+			if(dataNombre.length() > 0 && dataApellido.length() > 0 && dataTelefono.length() > 0) {
+				JOptionPane.showMessageDialog(null, "Reserva realizada con exito");
+			} else {
+				JOptionPane.showMessageDialog(null, "Es necesario completar todos los campos");
+			}
+		}	
 		
 	}
 }
