@@ -190,18 +190,20 @@ public class AdmCancha extends JFrame implements ActionListener {
 				btnHora[i].setEnabled(true);	
                 btnHora2[i].setEnabled(false);
         //Verifica que la hora se haya seleccionado y que no este contenida en el arraylist de horarios seleccionados anteriormente         
-             if(btnHora[i].isSelected() && !horario1.contains(btnHora[i].toString())) {
+             if(btnHora[i] == e.getSource() && !horario1.contains(btnHora[i].toString())) {
                 	btnReservar.setEnabled(true);
                 	if(btnReservar.isSelected()) {
     		 		horario1.add(btnHora[i].toString()); //Agrego el horario seleccionado al arraylist           	   
                 	}
-            	}  	 	              
+            	}else {
+            		
+            	}
 	
 			}     
 			 else if (btnCancha2.isSelected()) {
 				btnHora2[i].setEnabled(true);
                 btnHora[i].setEnabled(false);
-                	if(btnHora2[i].isSelected() && !horario2.contains(btnHora2[i].toString())) {
+                	if(btnHora2[i] == e.getSource() && !horario2.contains(btnHora2[i].toString())) {
                 		btnReservar.setEnabled(true);
                 		if(btnReservar.isSelected()) {
                 		horario2.add(btnHora2[i].toString()); //Agrego el horario seleccionado al arraylist   
