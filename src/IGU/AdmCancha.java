@@ -26,15 +26,17 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 
+
+
 import javax.swing.SwingUtilities;
 
 
 
 public class AdmCancha extends JFrame implements ActionListener {
 	//Variables Globales
-	JButton btnCaja, btnCancelar, btnReservar, btnVReservas;
+	JButton btnCaja, btnReservar, btnVReservas;
 	private JLabel lblDatos;
-	JToggleButton btnCancha, btnCancha2, btnHora[], btnHora2[];
+	JToggleButton btnCancha, btnCancha2, btnHora[], btnHora2[], btnCancelar;
 	JTextField nombre, apellido, telefono;
 	JButton btn1[], btn2[];
 	int c=0;
@@ -43,7 +45,7 @@ public class AdmCancha extends JFrame implements ActionListener {
     int contador1 = 0, temp1 = 0, contador2 = 0, temp2 = 0;
     ArrayList <String> horario1 = new ArrayList <String>();
     ArrayList <String> horario2 = new ArrayList <String>();
-    int contador = 0;
+    int contador = 0, p = 0, z = 1;
     public String dataNombre = "", dataApellido = "", dataTelefono = "";
     String opcion;
     boolean esCancha1;
@@ -79,6 +81,8 @@ public class AdmCancha extends JFrame implements ActionListener {
 		btnCancha2.setBackground(green);
 		btnCancha2.setForeground(Color.WHITE);
 		MenuCanchas.add(btnCancha2);
+		
+		
 
 		//BOTONES DE HORARIOS - CREACION Y ADHESION		
 		btn1 = new JButton[10];
@@ -101,6 +105,21 @@ public class AdmCancha extends JFrame implements ActionListener {
 					
 					esCancha1 = true;
 					opcion = name;
+					
+					if(btnCancelar.isEnabled() && btnCancelar.isSelected()) {
+						if(horario1.contains(opcion)) {						
+							JOptionPane.showMessageDialog(null, "Cancelacion exitosa");
+							horario1.remove(opcion);
+							for(int x =0; x < 10; x++) {
+								if(btn1[x].getName() == opcion)
+							btn1[x].setBackground(new JButton().getBackground());
+							}
+							
+						}
+						btnCancelar.setSelected(false);
+						btnCancha.setSelected(false);
+					}
+					
 				}
 		    });
 			MenuCanchas.add(btn1[i]);
@@ -119,6 +138,20 @@ public class AdmCancha extends JFrame implements ActionListener {
 					
 					esCancha1 = false;
 					opcion = name;
+					
+					if(btnCancelar.isEnabled() && btnCancelar.isSelected()) {
+						if(horario2.contains(opcion)) {						
+							JOptionPane.showMessageDialog(null, "Cancelacion exitosa");
+							horario2.remove(opcion);
+							for(int x =0; x < 10; x++) {
+								if(btn2[x].getName() == opcion)
+							btn2[x].setBackground(new JButton().getBackground());
+							}
+							
+						}
+						btnCancelar.setSelected(false);
+						btnCancha2.setSelected(false);
+					}
 				}
 		    });
 			MenuCanchas.add(btn2[i]);
@@ -177,13 +210,13 @@ public class AdmCancha extends JFrame implements ActionListener {
 		btnReservar.setEnabled(false);
 		btnReservar.addActionListener(this);
 		MenuCanchas.add(btnReservar);
-	
 		
-		btnCancelar = new JButton("Cancelar");
+		btnCancelar = new JToggleButton("Cancelar");
 		btnCancelar.setBounds(570, 300, 106, 51);
 		btnCancelar.setEnabled(false);
 		btnCancelar.addActionListener(this);
 		MenuCanchas.add(btnCancelar);
+	
 		
 		btnVReservas = new JButton("Reservas");
 		btnVReservas.setBounds(570, 366, 106, 33);
@@ -226,6 +259,7 @@ public class AdmCancha extends JFrame implements ActionListener {
 					for(int i = 0; i < 10; i++) {
 						if(btn1[i].getName() == opcion) {
 							btn1[i].setEnabled(false);
+							btn1[i].setBackground(Color.DARK_GRAY);
 						}
 					}
 				} else {
@@ -234,10 +268,15 @@ public class AdmCancha extends JFrame implements ActionListener {
 					for(int i = 0; i < 10; i++) {
 						if(btn2[i].getName() == opcion) {
 							btn2[i].setEnabled(false);
+							btn2[i].setBackground(Color.DARK_GRAY);
 						}
 					}
+					
 				}
 				JOptionPane.showMessageDialog(null, "Reserva exitosa");
+				btnReservar.setEnabled(false);
+				btnCancha.setSelected(false);
+				btnCancha2.setSelected(false);
 			} else {
 				JOptionPane.showMessageDialog(null, "Son obligatorios los datos del usuario");
 			}
@@ -252,7 +291,7 @@ public class AdmCancha extends JFrame implements ActionListener {
 			btnReservar.setEnabled(false);
 		}
 		
-		// Habilita horarios según cancha seleccionada si aun no fueron reservados		 
+		// Habilita horarios segun cancha seleccionada si aun no fueron reservados		 
 		for(int i = 0; i<10; i++) {
 			if(btnCancha.isSelected() && !horario1.contains(btn1[i].getName())) {
 				btn1[i].setEnabled(true);	
@@ -268,23 +307,33 @@ public class AdmCancha extends JFrame implements ActionListener {
 		}
 		
 		/* -------------------------- CANCELACION DE TURNO ------------------*/
-		if(btnCancelar == e.getSource()) {
-			JOptionPane.showMessageDialog(null, "Cancelacion exitosa");
-		}
 		
-		//Cancelacion de reservas
-		//for(int i = 0; i<10; i++) {			
-			//if(btnCancha.isSelected() && btn1[i].isSelected()) {
-				//btnCancelar.setEnabled(true); 
-				
-				//Verifica que este contenido en el arraylist de horarios seleccionados anteriormente y elimina       
-				//if(btnCancelar.isSelected()){                	              
-    		 		//horario1.remove(btn1[i].toString());
-    		 		//btn1[i].setSelected(false);
-    		 		//btnCancha.setSelected(false);	
-            	//}
-			//}   
-		//}
+			
+			if(btnCancha.isSelected() && horario1.size() > 0 || btnCancha2.isSelected() && horario2.size() > 0) {
+				btnCancelar.setEnabled(true);
+					
+				}else {
+					
+					btnCancelar.setEnabled(false);
+			}
+			for(int i = 0; i<10; i++) {
+				if(btnCancelar.isSelected()) {					
+					btn1[i].setEnabled(true);
+	
+				}
+			}
+			
+			for(int i = 0; i<10; i++) {
+				if(btnCancelar.isSelected()) {					
+					btn2[i].setEnabled(true);
+
+				}
+			}
+			
+			
+        //CONTINUA EN LOS EVENTOS DE LOS BOTONES DE HORARIOS
+			
+
 		
 		/* -------------------------- EXPORTAR RESERVAS -----------------------*/
 		if(btnVReservas == e.getSource()) {
@@ -333,5 +382,6 @@ public class AdmCancha extends JFrame implements ActionListener {
 			mover.setVisible(true);
 		}
 		
+		}
 	}
-}
+
