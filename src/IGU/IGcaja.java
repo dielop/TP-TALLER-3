@@ -32,15 +32,15 @@ public class IGcaja extends JFrame implements ActionListener {
 	ArrayList <String> canchas = new ArrayList <String>();
     ArrayList <String> descripciones = new ArrayList <String>();
     ArrayList <String> valores = new ArrayList <String>();
-    int contador = 0;
+    int contador = 0, primeraEscritura = 0;
     		
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		IGcaja C = new IGcaja();
 	}
 	
 	public IGcaja() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(450,230);
+		setSize(450,200);
 		setLocationRelativeTo(null);
 		setTitle("Tu cancha - Caja");
 		
@@ -79,23 +79,134 @@ public class IGcaja extends JFrame implements ActionListener {
 		btnActualizar.setBounds(173, 79, 120, 23);
 		btnActualizar.addActionListener(this);
 		Box.add(btnActualizar);
-		
-		btnExport = new JButton("Exportar");
-		btnExport.setBounds(173, 113, 120, 23);
-		btnExport.addActionListener(this);
-		Box.add(btnExport);
 	
 		btnAtras = new JButton("Atras");
-		btnAtras.setBounds(173, 147, 120, 23);
+		btnAtras.setBounds(173, 117, 120, 23);
 		btnAtras.addActionListener(this);
 		Box.add(btnAtras);
 						
 		ctx.add(Box);
 		
 		setResizable(false);
-		//setVisible(true);
 	}
 
+	public static int createCSV(String dataCancha, String dataDescripcion, String dataValor, int primeraEscritura) throws Exception {
+		PrintWriter writer = null;
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(new File("caja.csv"));
+            writer = new PrintWriter(out);
+            StringBuilder sb = new StringBuilder();
+
+			sb.append("Cancha");
+			sb.append(',');
+			sb.append("Ingreso");
+			sb.append(',');
+			sb.append("Valor");
+			sb.append(',');
+			sb.append("Total acumulado");
+			sb.append('\n');
+		    
+		    sb.append(dataCancha);
+		    sb.append(',');
+		    sb.append(dataDescripcion);
+		    sb.append(',');
+		    sb.append(dataValor);
+		    sb.append(',');
+		    sb.append(dataValor);
+		    sb.append('\n');
+		    
+		    writer.write(sb.toString());
+		    
+		    primeraEscritura = 1;
+		    JOptionPane.showMessageDialog(null, "Ingreso cargado con éxito!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != writer) {
+                writer.close();
+            }
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return primeraEscritura;
+    }
+
+	public static int readCSV(int contador) throws Exception {
+		BufferedReader reader = null;     
+        
+        String newLine;
+        try {
+            reader = new BufferedReader(new FileReader("caja.csv")); 
+
+            int bucle = 0;
+			while ((newLine = reader.readLine()) != null) {
+				if(bucle == 0) {
+					bucle = 1;
+				} else {
+				    String[] data = newLine.split(",");
+				    if(data[3].length() > 0) {
+				    	contador = (Integer.parseInt(data[3]));		
+				    }		
+				}
+			}
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != reader) {
+                reader.close();
+            }
+        }
+
+        return contador;
+    }
+	
+	public static boolean updateCSV(String dataCancha, String dataDescripcion, String dataValor, int acumulador) throws Exception {
+		PrintWriter writer = null;
+		FileOutputStream out = null;
+		boolean exito = false;
+		try {
+			out = new FileOutputStream(new File("caja.csv"),true);
+			writer = new PrintWriter(out);
+			StringBuilder sb = new StringBuilder();
+		    
+		    sb.append(dataCancha);
+		    sb.append(',');
+		    sb.append(dataDescripcion);
+		    sb.append(',');
+		    sb.append(dataValor);
+		    sb.append(',');
+		    sb.append(acumulador + (Integer.parseInt(dataValor)));
+		    sb.append('\n');
+		    
+		    writer.write(sb.toString());
+	
+		    JOptionPane.showMessageDialog(null, "Ingreso cargado con éxito!");
+		    
+		    exito = true;
+		} catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != writer) {
+                writer.close();
+            }
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+		
+		return exito;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -113,71 +224,24 @@ public class IGcaja extends JFrame implements ActionListener {
 				descripciones.add(dataDescripcion);
 				valores.add(dataValor);
 				
-				try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("caja.csv"),true))) {
-					
-					StringBuilder sb = new StringBuilder();
-				    
-				    sb.append(dataCancha);
-				    sb.append(',');
-				    sb.append(dataDescripcion);
-				    sb.append(',');
-				    sb.append(dataValor);
-				    sb.append('\n');
-				    
-				    writer.write(sb.toString());
-	
-				    JOptionPane.showMessageDialog(null, "Ingreso cargado con éxito!");
-				} catch (FileNotFoundException i) {
-					System.out.println(i.getMessage());
-				}  
+				if(primeraEscritura == 0) {
+					try {
+						int pudoEscribir = createCSV(dataCancha, dataDescripcion, dataValor, primeraEscritura);
+						primeraEscritura = pudoEscribir;
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				} else {
+					try {
+						int acumulador = readCSV(contador);
+						updateCSV(dataCancha, dataDescripcion, dataValor, acumulador);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				} 
 			} else {
 				JOptionPane.showMessageDialog(null, "Es necesario completar todos los campos");
 			}
 		}
-		
-		if(btnExport == e.getSource()) {
-			JOptionPane.showMessageDialog(null, "Exportando la caja...");
-				
-			String newLine;
-			try (BufferedReader csvReader = new BufferedReader(new FileReader("caja.csv"))) {
-				int bucle = 0;
-				while ((newLine = csvReader.readLine()) != null) {
-					if(bucle == 0) {
-						bucle = 1;
-					} else {
-					    String[] data = newLine.split(",");
-					    if(data[2].length() > 0) {
-					    	contador = contador + (Integer.parseInt(data[2]));		
-					    }		
-					}
-				}
-				
-				csvReader.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}  
-			
-			if(contador > 0) {
-				try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("caja.csv"),true))) {
-					StringBuilder sb = new StringBuilder();
-				    
-				    sb.append(',');
-				    sb.append(',');
-				    sb.append(',');
-				    sb.append(contador);
-				    sb.append('\n');
-				    
-				    writer.write(sb.toString());
-	
-				    JOptionPane.showMessageDialog(null, "Planilla exportada con exito!");
-				} catch (FileNotFoundException i) {
-					System.out.println(i.getMessage());
-				}
-			} else {
-				JOptionPane.showMessageDialog(null, "Aun no hay ingresos en caja");
-			}
-
-		}	
 	}
 }
