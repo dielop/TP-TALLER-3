@@ -274,6 +274,9 @@ public class AdmCancha extends JFrame implements ActionListener {
 					
 				}
 				JOptionPane.showMessageDialog(null, "Reserva exitosa");
+				nombre.setText("");
+				apellido.setText("");
+				telefono.setText("");
 				btnReservar.setEnabled(false);
 				btnCancha.setSelected(false);
 				btnCancha2.setSelected(false);
@@ -344,7 +347,9 @@ public class AdmCancha extends JFrame implements ActionListener {
 					StringBuilder sb = new StringBuilder();
 				    
 				    for (String hora : horario1) {
-				    	sb.append(hora + " cancha 1");
+				    	sb.append(hora);
+				    	sb.append(',');
+				    	sb.append("cancha 1");
 				    	sb.append('\n');
 				    }
 				    
