@@ -35,14 +35,17 @@ public class AdmCancha extends JFrame implements ActionListener {
 	JButton btnCaja, btnReservar, btnVReservas;
 	private JLabel lblDatos;
 	JToggleButton btnCancha, btnCancha2, btnHora[], btnHora2[], btnCancelar;
-	JTextField nombre, apellido, telefono;
+	public JTextField nombre, apellido, telefono;
 	JButton btn1[], btn2[];
 	int c=0, contador = 0, p = 0, z = 1, primeraEscritura = 0, contador1 = 0, temp1 = 0, contador2 = 0, temp2 = 0;
+    static int n = 0, k = 0;
 	Color green = new Color(10, 47, 30);
 	Color selectedGreen = new Color(75, 139,  59);
     ArrayList <String> horario1 = new ArrayList <String>();
     ArrayList <String> horario2 = new ArrayList <String>();
-    public String dataNombre = "", dataApellido = "", dataTelefono = "";
+    String dataNombre = "", dataApellido = "", dataTelefono = "";
+   
+    
     String opcion;
     boolean esCancha1;
 
@@ -56,6 +59,8 @@ public class AdmCancha extends JFrame implements ActionListener {
 		JPanel MenuCanchas = new JPanel();
 		MenuCanchas.setLayout(null);
 		MenuCanchas.setBackground(Color.BLACK);
+		
+		/* --------------------------------------------------------------------*/
 
 		//BOTONES DE RESERVA CANCHA 1 O CANCHA 2
 		btnCancha = new JToggleButton("Cancha 1", false);
@@ -78,7 +83,7 @@ public class AdmCancha extends JFrame implements ActionListener {
 		btnCancha2.setForeground(Color.WHITE);
 		MenuCanchas.add(btnCancha2);
 		
-		
+		/* --------------------------------------------------------------------*/
 
 		//BOTONES DE HORARIOS - CREACION Y ADHESION		
 		btn1 = new JButton[10];
@@ -93,7 +98,7 @@ public class AdmCancha extends JFrame implements ActionListener {
 			btn1[i].setBounds(x, b, c, d);
 			btn1[i].addActionListener (new ActionListener() {
 				public void actionPerformed (ActionEvent e) {
-					//((JButton) e.getSource()).setBackground(Color.LIGHT_GRAY);
+					
 					JButton o = (JButton)e.getSource();
 					String name = o.getName();
 					
@@ -102,6 +107,9 @@ public class AdmCancha extends JFrame implements ActionListener {
 					esCancha1 = true;
 					opcion = name;
 					
+					/* --------------------------------------------------------------------*/
+					/* Si el boton cancelar seleccionado, elimina horario del ArrayList    */
+					/* reescribe el archivo con los horarios                               */
 					if(btnCancelar.isEnabled() && btnCancelar.isSelected()) {
 						if(horario1.contains(opcion)) {						
 							horario1.remove(opcion);
@@ -142,6 +150,10 @@ public class AdmCancha extends JFrame implements ActionListener {
 					esCancha1 = false;
 					opcion = name;
 					
+					/* --------------------------------------------------------------------*/
+					/* Si el boton cancelar seleccionado, elimina horario del ArrayList    */
+					/* reescribe el archivo con los horarios                               */
+					
 					if(btnCancelar.isEnabled() && btnCancelar.isSelected()) {
 						if(horario2.contains(opcion)) {						
 							horario2.remove(opcion);
@@ -168,13 +180,15 @@ public class AdmCancha extends JFrame implements ActionListener {
 			b = b + 38;
 		}
 		
-		//BOTON DE CAJA SUPERIOR
+		//BOTON DE CAJA
 		btnCaja = new JButton("Ver caja");
 		btnCaja.setBounds(570, 403, 106, 33);
 		btnCaja.addActionListener(this);
 		MenuCanchas.add(btnCaja);
 		
-		//BOTONES DE RESERVA Y CANCELACION DE TURNO
+		/* --------------------------------------------------------------------*/
+		//TEXTFIELDS PARA COMPLETAR DATOS DE LAS PERSONAS QUE RESERVAN
+		
 		JLabel lblNombre = new JLabel("Nombre");
 		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNombre.setForeground(Color.WHITE);
@@ -215,6 +229,10 @@ public class AdmCancha extends JFrame implements ActionListener {
 		telefono.addActionListener(this);
 		MenuCanchas.add(telefono);
 		
+		/* --------------------------------------------------------------------*/
+		
+		//BOTONES DE RESERVA Y CANCELACION DE TURNO
+		
 		btnReservar = new JButton("Reservar");
 		btnReservar.setBounds(570, 240, 106, 51);
 		btnReservar.setEnabled(false);
@@ -226,6 +244,8 @@ public class AdmCancha extends JFrame implements ActionListener {
 		btnCancelar.setEnabled(false);
 		btnCancelar.addActionListener(this);
 		MenuCanchas.add(btnCancelar);
+		
+		/* --------------------------------------------------------------------*/
 
 		//ETIQUETAS - TITULOS DE BOTONES
 		JLabel lblHorarios = new JLabel("Canchas con sus horarios");
@@ -240,10 +260,15 @@ public class AdmCancha extends JFrame implements ActionListener {
 		lblDatos.setBounds(580, 20, 120, 33);
 		MenuCanchas.add(lblDatos);
 		
+		/* --------------------------------------------------------------------*/
+		
 		ctx.add(MenuCanchas);
 
 		setVisible(true);
 	}
+	
+	    /* --------------------------------------------------------------------*/
+	    /* Creo el archivo de reservas */
 	
 	public static boolean createCSV (ArrayList <String> horario1, ArrayList <String> horario2) throws Exception {
 		boolean exito = false;
@@ -255,27 +280,54 @@ public class AdmCancha extends JFrame implements ActionListener {
 				writer = new PrintWriter(out);
 				StringBuilder sb = new StringBuilder();
 				
+				sb.append("Nombre");
+				sb.append(",");
+				sb.append("Apellido");
+				sb.append(",");
+				sb.append("Telefono");
+				sb.append(",");
 				sb.append("Horario");
 			    sb.append(',');
 			    sb.append("Cancha");
 			    sb.append('\n');
-			    
-			    for (String hora : horario1) {
+
+			
+			    int t = 4;
+			    int x = 0;
+			   for(String hora : horario1) {
+			
 			    	sb.append(hora);
 			    	sb.append(',');
+			    	x++;
+			    	
+			    	if(x == t) {
+			    	t = t+4;
 			    	sb.append("cancha 1");
 			    	sb.append('\n');
+			    	}
+			    	
 			    }
-			    
+			   
+			   
+			   
+			    int p = 4;
+			    int l = 0;
 			    for (String hora : horario2) {
 			    	sb.append(hora);
 			    	sb.append(',');
+			    	l++;
+			    	
+			    	if(l == p) {
+			    	p = p + 4;
 			    	sb.append("cancha 2");
 			    	sb.append('\n');
+			    	}
 			    }
 			    
 			    writer.write(sb.toString());
 			    exito = true;
+			    
+			    
 			} catch (Exception e) {
 	            e.printStackTrace();
 	        } finally {
@@ -292,8 +344,13 @@ public class AdmCancha extends JFrame implements ActionListener {
 	        }
 		} 
 		
+		
+		
 		return exito;
 	}
+	
+	/* --------------------------------------------------------------------*/
+	/* Acciones de los botones*/
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -305,10 +362,15 @@ public class AdmCancha extends JFrame implements ActionListener {
 			dataApellido = apellido.getText();	
 			dataTelefono = telefono.getText();	
 			
-			// Valido que haya ingresado los datos del cliente
+			// Valido que haya ingresado los datos del cliente para poder reservar
 			if(!dataNombre.isEmpty() && !dataApellido.isEmpty() && !dataTelefono.isEmpty()) {
 				if(esCancha1) {
-					horario1.add(opcion);	
+					
+					horario1.add(dataNombre);
+					horario1.add(dataApellido);
+					horario1.add(dataTelefono);
+					horario1.add(opcion);
+					
 					
 					for(int i = 0; i < 10; i++) {
 						if(btn1[i].getName() == opcion) {
@@ -317,7 +379,12 @@ public class AdmCancha extends JFrame implements ActionListener {
 						}
 					}
 				} else {
+					horario2.add(dataNombre);
+					horario2.add(dataApellido);
+					horario2.add(dataTelefono);
 					horario2.add(opcion);
+					
+					
 					
 					for(int i = 0; i < 10; i++) {
 						if(btn2[i].getName() == opcion) {
