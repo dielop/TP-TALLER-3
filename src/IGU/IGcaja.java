@@ -49,6 +49,8 @@ public class IGcaja extends JFrame implements ActionListener {
 		Box.setLayout(null);
 		Box.setBackground(Color.WHITE);
 
+		/* --------------------------------------------------------------------*/
+		/* ETIQUETAS */
 		
 		JLabel Cancha = new JLabel("Cancha");
 		Cancha.setBounds(44, 11, 66, 14);
@@ -61,6 +63,9 @@ public class IGcaja extends JFrame implements ActionListener {
 		JLabel Valor = new JLabel("Valor");
 		Valor.setBounds(372, 11, 46, 14);
 		Box.add(Valor);
+		
+		/* --------------------------------------------------------------------*/
+		/* TEXTFIELD PARA LOS VALORES DE CAJA */
 		
 		canText = new JTextField();
 		canText.setBounds(24, 33, 86, 20);
@@ -75,6 +80,9 @@ public class IGcaja extends JFrame implements ActionListener {
 		valText.setBounds(351, 33, 86, 20);
 		Box.add(valText);
 		
+		/* --------------------------------------------------------------------*/
+		/* BOTONES */
+		
 		btnActualizar = new JButton("Actualizar");
 		btnActualizar.setBounds(173, 79, 120, 23);
 		btnActualizar.addActionListener(this);
@@ -84,6 +92,8 @@ public class IGcaja extends JFrame implements ActionListener {
 		btnAtras.setBounds(173, 117, 120, 23);
 		btnAtras.addActionListener(this);
 		Box.add(btnAtras);
+		
+		/* --------------------------------------------------------------------*/
 						
 		ctx.add(Box);
 		
@@ -187,7 +197,7 @@ public class IGcaja extends JFrame implements ActionListener {
 		    
 		    writer.write(sb.toString());
 	
-		    JOptionPane.showMessageDialog(null, "Ingreso cargado con éxito!");
+		    JOptionPane.showMessageDialog(null, "Ingreso cargado con Exito!");
 		    
 		    exito = true;
 		} catch (Exception e) {
