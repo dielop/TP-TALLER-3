@@ -15,7 +15,6 @@ import javax.swing.SwingConstants;
 
 import java.awt.Font;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -98,7 +97,6 @@ public class AdmCancha extends JFrame implements ActionListener {
 			btn1[i].setBounds(x, b, c, d);
 			btn1[i].addActionListener (new ActionListener() {
 				public void actionPerformed (ActionEvent e) {
-					
 					JButton o = (JButton)e.getSource();
 					String name = o.getName();
 					
@@ -111,11 +109,16 @@ public class AdmCancha extends JFrame implements ActionListener {
 					/* Si el boton cancelar seleccionado, elimina horario del ArrayList    */
 					/* reescribe el archivo con los horarios                               */
 					if(btnCancelar.isEnabled() && btnCancelar.isSelected()) {
-						if(horario1.contains(opcion)) {						
-							horario1.remove(opcion);
-							
+						if(horario1.contains(opcion)) {									
 							try {
-								createCSV(horario1, horario2);
+								int indexes = horario1.indexOf(opcion);	
+								for(int i = 0; i < 4; i++) {
+									horario1.remove(indexes - i);
+									
+									if(i == 3) {
+										createCSV(horario1, horario2);	
+									}
+								}	
 							} catch (Exception e1) {
 								e1.printStackTrace();
 							}
@@ -141,7 +144,6 @@ public class AdmCancha extends JFrame implements ActionListener {
 			btn2[i].setBounds(a, b, c, d);
 			btn2[i].addActionListener (new ActionListener() {
 				public void actionPerformed (ActionEvent e) {
-					//((JButton) e.getSource()).setBackground(Color.LIGHT_GRAY);
 					JButton o = (JButton)e.getSource();
 					String name = o.getName();
 					
@@ -153,13 +155,17 @@ public class AdmCancha extends JFrame implements ActionListener {
 					/* --------------------------------------------------------------------*/
 					/* Si el boton cancelar seleccionado, elimina horario del ArrayList    */
 					/* reescribe el archivo con los horarios                               */
-					
 					if(btnCancelar.isEnabled() && btnCancelar.isSelected()) {
-						if(horario2.contains(opcion)) {						
-							horario2.remove(opcion);
-							
+						if(horario2.contains(opcion)) {											
 							try {
-								createCSV(horario1, horario2);
+								int indexes = horario2.indexOf(opcion);	
+								for(int i = 0; i < 4; i++) {
+									horario2.remove(indexes - i);
+
+									if(i == 3) {
+										createCSV(horario1, horario2);	
+									}
+								}	
 							} catch (Exception e1) {
 								e1.printStackTrace();
 							}
@@ -188,7 +194,6 @@ public class AdmCancha extends JFrame implements ActionListener {
 		
 		/* --------------------------------------------------------------------*/
 		//TEXTFIELDS PARA COMPLETAR DATOS DE LAS PERSONAS QUE RESERVAN
-		
 		JLabel lblNombre = new JLabel("Nombre");
 		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNombre.setForeground(Color.WHITE);
@@ -260,91 +265,78 @@ public class AdmCancha extends JFrame implements ActionListener {
 		lblDatos.setBounds(580, 20, 120, 33);
 		MenuCanchas.add(lblDatos);
 		
-		/* --------------------------------------------------------------------*/
-		
 		ctx.add(MenuCanchas);
 
 		setVisible(true);
 	}
-	
 	    /* --------------------------------------------------------------------*/
 	    /* Creo el archivo de reservas */
-	
 	public static boolean createCSV (ArrayList <String> horario1, ArrayList <String> horario2) throws Exception {
 		boolean exito = false;
-		if(horario1.size() > 0 || horario2.size() > 0) {
-			PrintWriter writer = null;
-			FileOutputStream out = null;
-			try {
-				out = new FileOutputStream(new File("reservas.csv"));
-				writer = new PrintWriter(out);
-				StringBuilder sb = new StringBuilder();
-				
-				sb.append("Nombre");
-				sb.append(",");
-				sb.append("Apellido");
-				sb.append(",");
-				sb.append("Telefono");
-				sb.append(",");
-				sb.append("Horario");
-			    sb.append(',');
-			    sb.append("Cancha");
-			    sb.append('\n');
-
+		PrintWriter writer = null;
+		FileOutputStream out = null;
+		try {
+			out = new FileOutputStream(new File("reservas.csv"));
+			writer = new PrintWriter(out);
+			StringBuilder sb = new StringBuilder();
 			
-			    int t = 4;
-			    int x = 0;
-			   for(String hora : horario1) {
-			
+			sb.append("Nombre");
+			sb.append(",");
+			sb.append("Apellido");
+			sb.append(",");
+			sb.append("Telefono");
+			sb.append(",");
+			sb.append("Horario");
+		    sb.append(',');
+		    sb.append("Cancha");
+		    sb.append('\n');
+		
+		    if(horario1.size() > 0) {
+		    	int t = 4, x = 0;
+			    for(String hora : horario1) {
 			    	sb.append(hora);
 			    	sb.append(',');
 			    	x++;
 			    	
 			    	if(x == t) {
-			    	t = t+4;
-			    	sb.append("cancha 1");
-			    	sb.append('\n');
+				    	t = t+4;
+				    	sb.append("1");
+				    	sb.append('\n');
 			    	}
-			    	
-			    }
-			   
-			   
-			   
-			    int p = 4;
-			    int l = 0;
+			    }	
+		    }
+		   
+		    if(horario2.size() > 0) {
+			    int p = 4, l = 0;
 			    for (String hora : horario2) {
 			    	sb.append(hora);
 			    	sb.append(',');
 			    	l++;
 			    	
 			    	if(l == p) {
-			    	p = p + 4;
-			    	sb.append("cancha 2");
-			    	sb.append('\n');
+				    	p = p + 4;
+				    	sb.append("2");
+				    	sb.append('\n');
 			    	}
 			    }
-			    
-			    writer.write(sb.toString());
-			    exito = true;
-			    
-			    
-			} catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            if (null != writer) {
-	                writer.close();
-	            }
-	            if (null != out) {
-	                try {
-	                    out.close();
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        }
-		} 
-		
-		
+		    }
+		    
+		    writer.write(sb.toString());
+		    exito = true;
+		} catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != writer) {
+                writer.close();
+            }
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 		
 		return exito;
 	}
@@ -365,12 +357,10 @@ public class AdmCancha extends JFrame implements ActionListener {
 			// Valido que haya ingresado los datos del cliente para poder reservar
 			if(!dataNombre.isEmpty() && !dataApellido.isEmpty() && !dataTelefono.isEmpty()) {
 				if(esCancha1) {
-					
 					horario1.add(dataNombre);
 					horario1.add(dataApellido);
 					horario1.add(dataTelefono);
 					horario1.add(opcion);
-					
 					
 					for(int i = 0; i < 10; i++) {
 						if(btn1[i].getName() == opcion) {
@@ -384,15 +374,12 @@ public class AdmCancha extends JFrame implements ActionListener {
 					horario2.add(dataTelefono);
 					horario2.add(opcion);
 					
-					
-					
 					for(int i = 0; i < 10; i++) {
 						if(btn2[i].getName() == opcion) {
 							btn2[i].setEnabled(false);
 							btn2[i].setBackground(Color.DARK_GRAY);
 						}
 					}
-					
 				}				
 				
 				try {
@@ -439,7 +426,7 @@ public class AdmCancha extends JFrame implements ActionListener {
 		}
 		
 		/* --------------------------------------------------------------------*/
-		/* --------------------------- CANCELACION DE TURNO -------------------*/
+		/* ------------------- HABILITA BOTONES PARA CANCELACION --------------*/
 		/* --------------------------------------------------------------------*/
 		if(btnCancha.isSelected() && horario1.size() > 0 || btnCancha2.isSelected() && horario2.size() > 0) {
 			btnCancelar.setEnabled(true);
