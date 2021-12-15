@@ -1,4 +1,4 @@
-package IGU;
+package igu;
 
 import java.awt.Color;
 
