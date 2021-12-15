@@ -1,8 +1,8 @@
-package Aplicacion;
-import IGU.AdmCancha;
+package aplicacion;
+import igu.AdmCancha;
 
 
-public class Main extends AdmCancha {
+public class Main {
 	
 	public static void main(String[] args) {
 	     AdmCancha M = new AdmCancha();
